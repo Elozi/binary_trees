@@ -1,47 +1,51 @@
 #include "binary_trees.h"
 
-/**
- * binary_tree_is_leaf - checks if a node is a leaf
- * @node:  pointer to the node to check
- * Return: 1 if node is a leaf, otherwise 0
- */
-int binary_tree_is_leaf(const binary_tree_t *node)
-{
-	if (node && !node->left  && !node->right)
-		return (1);
-
-	return (0);
-}
+int balance_recursion(const binary_tree_t *tree, int count);
 
 /**
- * binary_tree_height - measures the height of a binary tree
- * @tree: pointer to the root node of the tree to measure the height of
- *
- * Return: the height of the tree. If tree is NULL, return 0
- */
-size_t binary_tree_height(const binary_tree_t *tree)
-{
-	size_t left, right;
-
-	if (tree == NULL || binary_tree_is_leaf(tree))
-		return (0);
-	left = binary_tree_height(tree->left);
-	right = binary_tree_height(tree->right);
-	if (left > right)
-		return (1 + left);
-	return (1 + right);
-}
-
-/**
- * binary_tree_balance - Measures the balance factor of a binary tree.
- * @tree: A pointer to the root node of the tree to measure the balance factor.
- *
- * Return: If tree is NULL, return 0, else return balance factor.
+ * binary_tree_balance - measures the balance factor of a binary tree
+ * @tree: pointer to the root node of the tree to measure the balance factor
+ * Return: balance factor
+ * If tree is NULL, return 0
  */
 int binary_tree_balance(const binary_tree_t *tree)
 {
-	if (tree)
-		return (binary_tree_height(tree->left) - binary_tree_height(tree->right));
+	int right_balance = 0;
+	int left_balance = 0;
 
-	return (0);
+	if (tree == NULL)
+		return (0);
+
+	if (tree->left != NULL)
+		left_balance = balance_recursion(tree->left, 1);
+	if (tree->right != NULL)
+		right_balance = balance_recursion(tree->right, 1);
+
+	return (left_balance - right_balance);
+}
+
+/**
+ * balance_recursion - aux function for recursion
+ * @tree: pointer to tree
+ * @count: counter of height
+ * Return: height
+ */
+int balance_recursion(const binary_tree_t *tree, int count)
+{
+	int count_r = 0;
+	int count_l = 0;
+
+	if (tree->left != NULL)
+		count_l = balance_recursion(tree->left, count + 1);
+
+	if (tree->right != NULL)
+		count_r = balance_recursion(tree->right, count + 1);
+
+	if (tree->left == NULL && tree->right == NULL)
+		return (count);
+
+	if (count_r > count_l)
+		return (count_r);
+	else
+		return (count_l);
 }
